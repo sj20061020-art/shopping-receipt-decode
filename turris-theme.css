@@ -83,8 +83,6 @@ body:has(>#exhibit){background:#f4f2ee}
 #exhibit .dark-btn:hover{color:var(--ink);background:var(--screen-pop);border-color:var(--ink)}
 #exhibit .outline-btn:hover{background:var(--screen-pop)}
 #exhibit .outline-btn[aria-pressed=true]{color:var(--paper);background:var(--screen-ink)}
-.layout-launcher:not([hidden]){background:var(--paper);color:var(--muted)}
-.layout-launcher:hover,.layout-launcher:focus-visible{background:var(--tb-lemon-yellow);color:var(--ink);border-color:var(--ink)}
 
 /* 档案墙 */
 #exhibit .wall-tools{justify-content:flex-end}
@@ -219,12 +217,3 @@ body:has(>#exhibit){background:#f4f2ee}
 #rules .rule-card:nth-child(2){background:var(--tb-soft-pink);border-color:var(--tb-mulberry);color:var(--tb-mulberry)}
 #rules .rule-card:nth-child(3){background:var(--tb-lavender);border-color:var(--tb-midnight-indigo);color:var(--tb-charcoal)}
 #rules .rule-card:nth-child(4){background:var(--tb-deep-pine);border-color:var(--tb-deep-pine);color:var(--tb-soft-pink)}
-
-/* 排版工具 */
-.layout-editor{background:var(--tb-cool-grey);color:var(--tb-charcoal)}
-.layout-editor .editor-panel{background:var(--paper);border-color:var(--line)}
-.layout-editor h1,.layout-editor .editor-kicker{color:var(--tb-midnight-indigo)}
-.layout-editor .editor-scenes button[aria-pressed=true]{background:var(--tb-midnight-indigo);color:var(--tb-lemon-yellow);border-color:var(--tb-midnight-indigo)}
-.layout-editor .editor-modes label:has(:checked){background:var(--tb-soft-pink);border-color:var(--tb-mulberry);color:var(--tb-mulberry)}
-.layout-editor #layout-export{background:var(--tb-lemon-yellow);border-color:var(--tb-midnight-indigo);color:var(--tb-midnight-indigo)}
-.layout-editor #layout-preview{background:var(--tb-cool-grey)}

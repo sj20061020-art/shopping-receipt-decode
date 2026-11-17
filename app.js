@@ -1,15 +1,11 @@
 const view=document.querySelector('#view');
 const exhibit=document.querySelector('#exhibit');
 const personalityReceipt=document.querySelector('#personality-receipt');
-const layoutLauncher=document.querySelector('.layout-launcher');
 const stageHeight=900;
-const stageQuery=new URLSearchParams(location.search);
-const previewWidth=stageQuery.get('layout')==='1'?Number(stageQuery.get('stage')):0;
 function fitStage(){
- const stageWidth=Math.min(1800,Math.max(1320,previewWidth||stageHeight*innerWidth/Math.max(1,innerHeight)));
+ const stageWidth=Math.min(1800,Math.max(1320,stageHeight*innerWidth/Math.max(1,innerHeight)));
  document.documentElement.style.setProperty('--stage-width',stageWidth+'px');
  document.documentElement.style.setProperty('--stage-scale',Math.min(innerWidth/stageWidth,innerHeight/stageHeight));
- layoutLauncher.href='layout-editor.html?stage='+Math.round(stageWidth);
  exhibit.querySelector('.cart-stage')?.dispatchEvent(new Event('stage-resize'));
 }
 fitStage();
@@ -504,7 +500,7 @@ function analysisBasket(){
 }
 function analysis(){
  return '<div class="screen-tools">'+btn('pick','← 回到购物篮','text-btn')+'</div>'
-  +'<div class="analysis"><section class="chart-area"><div id="chart" data-layout-chart="nutrition">'+chart()+'</div>'
+  +'<div class="analysis"><section class="chart-area"><div id="chart">'+chart()+'</div>'
   +'<div class="analysis-next">'+btn('profile','↑ 揭晓人格小票','dark-btn','aria-haspopup="dialog" aria-controls="personality-receipt"')+'</div></section>'
   +'<aside class="receipt-panel"><details id="receipt"><summary>收起原小票 · '+ticket.id+'</summary>'+receipt(false)+'</details></aside></div>';
 }

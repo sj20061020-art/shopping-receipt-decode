@@ -15,24 +15,6 @@ html,body{width:100%;height:100%;overflow:hidden}body{background:#dfd9cb}#exhibi
 #exhibit .screen-tools{position:relative;display:flex;align-items:center;justify-content:flex-end;min-height:46px}
 #exhibit .screen-tools::after{content:"";position:absolute;inset:auto 0 0;border-bottom:1px solid var(--ink)}
 
-/* Leave the primary objects room and open supporting detail on demand. */
-.layout-launcher:not([hidden]){
- position:fixed;
- z-index:2;
- left:max(8px,env(safe-area-inset-left));
- bottom:max(8px,env(safe-area-inset-bottom));
- display:grid;
- place-items:center;
- width:28px;
- height:28px;
- border:1px solid transparent;
- border-radius:4px;
- background:#f1ece2;
- color:#82796c;
- text-decoration:none;
-}
-.layout-launcher:hover,.layout-launcher:focus-visible{background:#f8f4ea;border-color:#c2b9ac;color:#62594d}
-body:has(>#exhibit:is([data-page=pick],[data-page=analysis]))>.layout-launcher{display:none}
 #exhibit .analysis{display:block;position:relative;height:auto;padding:85px 56px 0 60px;border-top:0}
 #exhibit .analysis>.receipt-panel{position:absolute;z-index:4;top:18px;right:62px}
 #exhibit .analysis>.receipt-panel:not(:has(>details[open])){display:none}
