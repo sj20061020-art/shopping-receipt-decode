@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"
+     aria-hidden="true">
+  <title>蛋白质 · 模块链</title>
+  <path fill="#164C45" d="M8 10h5v4H8zM13 12h3.5v6H13z"/>
+  <rect fill="#164C45" x="3" y="6" width="7.5" height="7.5" rx="1.8"/>
+  <rect fill="#168D4A" x="11.4" y="4.2" width="9.4" height="8.1" rx="1.8"/>
+  <rect fill="#F4E24A" x="12.2" y="14.7" width="7.4" height="5.1" rx="1.4"/>
+</svg>
