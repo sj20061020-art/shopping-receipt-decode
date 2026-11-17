@@ -2,6 +2,7 @@ const view=document.querySelector('#view');
 const exhibit=document.querySelector('#exhibit');
 const personalityReceipt=document.querySelector('#personality-receipt');
 const stageHeight=900;
+const compact=matchMedia('(max-width: 760px)');
 function fitStage(){
  const stageWidth=Math.min(1800,Math.max(1320,stageHeight*innerWidth/Math.max(1,innerHeight)));
  document.documentElement.style.setProperty('--stage-width',stageWidth+'px');
@@ -16,6 +17,7 @@ const metrics=[['脂肪','g','fat'],['蛋白质','g','protein'],['总糖','g','s
 const palette=['lemon-yellow','cobalt-blue','soft-pink','deep-pine','hot-magenta','lavender','signal-red','cool-grey','emerald-green','terracotta','midnight-indigo','mulberry']
  .map(color=>'var(--tb-'+color+')');
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+const usePageMotion=()=>!compact.matches&&!reduced.matches;
 const display=new Intl.NumberFormat('zh-CN',{maximumFractionDigits:2});
 const fmt=x=>x===null?'未记录':display.format(x);
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -29,6 +31,28 @@ const chartSwatch=index=>palette[(index+(chartOffsets[exhibit.dataset.colorway]?
 const baskets=new Map();
 const basket=()=>baskets.get(ticket.id);
 const ticketPreview=id=>'assets/receipt-previews/ticket-'+id+'.webp';
+function previewImage(src){
+ const hasPack=typeof ART_PREVIEWS!=='undefined';
+ const preview=hasPack?ART_PREVIEWS[src]:null;
+ const source=hasPack&&!preview?' data-preview="'+esc(src)+'"':' src="'+esc(preview?.[2]??src)+'"';
+ const size=preview?' width="'+preview[0]+'" height="'+preview[1]+'"':'';
+ return '<img'+source+size+' decoding="async" alt="" draggable="false">';
+}
+function loadRemainingPreviews(){
+ if(typeof ART_PREVIEWS==='undefined')return;
+ const pack=document.createElement('script');
+ pack.src='art-previews-extra.js?v=1';
+ pack.fetchPriority='low';
+ pack.onload=()=>{
+  view.querySelectorAll('img[data-preview]').forEach(img=>{
+   const preview=ART_PREVIEWS[img.dataset.preview];
+   if(!preview)return;
+   [img.width,img.height,img.src]=preview;
+   img.removeAttribute('data-preview');
+  });
+ };
+ document.head.append(pack);
+}
 const image=(i)=>i.image?'<img class="food" src="'+i.image+'" alt="">':'<span class="food placeholder">'+esc(i.name)+'</span>';
 function btn(action,label,cls='outline-btn',extra=''){return '<button type="button" class="'+cls+'" data-act="'+action+'" '+extra+'>'+label+'</button>'}
 function render(){
@@ -104,7 +128,7 @@ function intro(){
  ];
  const place=([x,y,width,angle,tone])=>'style="--piece-x:'+x+'%;--piece-y:'+y+'%;--piece-width:'+width+'%;--piece-max-width:'+(width*15)+'px;--piece-angle:'+angle+'deg;'
   +(tone?'--piece-paper:var(--tb-'+tone+');':'')+'"';
- const artwork=(kind,id,src,name,placement)=>src?btn('cover-pick','<img '+(kind==='food'?'fetchpriority="high"':'decoding="async"')+' src="'+esc(src)+'" alt="" draggable="false">',
+ const artwork=(kind,id,src,name,placement)=>src?btn('cover-pick',previewImage(src),
   'cover-piece cover-'+kind+(placement[4]?' is-backed':''),
   place(placement)+' data-id="'+id+'" aria-label="'+esc('查看 '+id+' 号小票'+(name?' · '+name:''))+'"'):'';
  const receiptCards=entries=>entries.map(([id,...placement])=>artwork('receipt',id,ticketPreview(id),'',placement)).join('');
@@ -142,7 +166,7 @@ function ticketTile(t,nutrient,value){
  const subtotal=nutrient!==null&&value!==null&&partial(t,nutrient);
  const label=nutrient===null?amount(t):fmt(value)+(value===null?'':' '+metrics[nutrient][1]+(subtotal?' *':''));
  const accessibleLabel=nutrient===null?label:metrics[nutrient][0]+' '+label;
- return '<button type="button" class="tile" data-act="open" data-id="'+t.id+'" style="--accent:'+t.color+'" aria-label="'+t.id+' 号小票 '+accessibleLabel+'" aria-describedby="preview-'+t.id+'"><span class="mount"><img src="'+ticketPreview(t.id)+'" alt=""></span><span class="tile-meta"><span class="mono">No. '+t.id+'</span><span>'+label+'</span></span><span class="tile-preview" id="preview-'+t.id+'"><span class="mono">NO. '+t.id+'</span><span class="preview-summary"><strong>'+amount(t)+'</strong><span>'+names.length+' 种商品</span></span><span class="preview-items">'+examples+more+'</span></span></button>';
+ return '<button type="button" class="tile" data-act="open" data-id="'+t.id+'" style="--accent:'+t.color+'" aria-label="'+t.id+' 号小票 '+accessibleLabel+'" aria-describedby="preview-'+t.id+'"><span class="mount">'+previewImage(ticketPreview(t.id))+'</span><span class="tile-meta"><span class="mono">No. '+t.id+'</span><span>'+label+'</span></span><span class="tile-preview" id="preview-'+t.id+'"><span class="mono">NO. '+t.id+'</span><span class="preview-summary"><strong>'+amount(t)+'</strong><span>'+names.length+' 种商品</span></span><span class="preview-items">'+examples+more+'</span></span></button>';
 }
 function receipt(isPick){
  const action=isPick?'add':'mark';
@@ -157,7 +181,7 @@ function pick(){
   +'<div class="pick"><section class="receipt-panel"><p class="hint">点票面上的商品，将它放入购物篮。</p>'+receipt(true)+'</section>'
   +'<section class="cart-panel"><span id="count" class="cart-count mono" aria-live="polite"></span>'
   +'<div class="cart-stage">'+cart+'<div class="basket" id="basket"></div>'+basketSticker()+'</div>'
-  +'<p class="cart-caption">购物篮 <span class="hint">· 按住左键，左右晃动</span></p>'
+  +'<p class="cart-caption">购物篮 <span class="hint">· 按住购物篮，左右晃动</span></p>'
   +'<div class="actions">'+btn('all','全部装入')+btn('decode','解码整张小票 ↗','dark-btn')+'</div></section></div>';
 }
 const flyingItems=new WeakMap();
@@ -608,7 +632,7 @@ function go(next,{focus=true,stable=false,handoff=false,coverHandoff=false}={}){
  if(!handoff)exhibit.querySelector('.basket-handoff')?.remove();
  exhibit.querySelector('.site-wordmark').getAnimations().forEach(motion=>motion.cancel());
  const previous=page;
- const turningBook=!coverHandoff&&!reduced.matches&&previous!==next&&[previous,next].includes('intro');
+ const turningBook=!coverHandoff&&usePageMotion()&&previous!==next&&[previous,next].includes('intro');
  const bookPage=turningBook?view.cloneNode(true):null;
  const oldPaper=turningBook?getComputedStyle(exhibit).backgroundColor:'';
  const returning=next==='wall'&&page!=='wall'?view.querySelector('.ticket-wrap img'):null;
@@ -626,13 +650,14 @@ function go(next,{focus=true,stable=false,handoff=false,coverHandoff=false}={}){
  if(next==='wall'){
   window.scrollTo(0,0);
   const landing=wallId&&view.querySelector('.tile[data-id="'+wallId+'"] img');
-  if(returning&&landing){
+  if(usePageMotion()&&returning&&landing){
    const finish=()=>{if(!landing.isConnected)return;const motion=fly(returning.src,returnBox,landing.getBoundingClientRect(),'ticket-flight');if(motion){landing.style.opacity='0';motion.then(()=>landing.style.opacity='')}};
    if(landing.complete)finish();else landing.addEventListener('load',finish,{once:true});
   }
   if(focus){
    const target=wallId?view.querySelector('[data-id="'+wallId+'"]'):view;
    (target??view).focus({preventScroll:true});
+   if(compact.matches&&target!==view)target?.scrollIntoView({block:'nearest'});
   }
  }else if(!stable){
   window.scrollTo(0,0);
@@ -686,7 +711,7 @@ async function openCoverPiece(button){
  if(page!=='intro'||exhibit.querySelector('.cover-reveal'))return;
  wallId=button.dataset.id;
  const source=button.querySelector('img');
- if(reduced.matches||!source.naturalWidth){
+ if(!usePageMotion()||!source.naturalWidth){
   go('wall',{coverHandoff:true});
   return;
  }
@@ -765,7 +790,7 @@ function select(id,next='pick'){
  if(page==='wall')wallId=id;
  ticket=t;
  if(!baskets.has(id))baskets.set(id,new Set());
- if(next==='pick'){
+ if(next==='pick'&&!compact.matches){
   for(const src of new Set(t.items.map(item=>item.image).filter(Boolean))){
    const preload=new Image();
    preload.src=src;
@@ -825,8 +850,8 @@ function capturePaperTurn(tile){
 }
 function openTicket(button,id){
  const onWall=page==='wall';
- const from=onWall?button.querySelector('img')?.getBoundingClientRect():null;
- const reveal=from?.width&&!reduced.matches?capturePaperTurn(button):null;
+ const from=onWall&&usePageMotion()?button.querySelector('img')?.getBoundingClientRect():null;
+ const reveal=from?.width?capturePaperTurn(button):null;
  select(id);
  if(reveal){
   reveal();
@@ -891,7 +916,7 @@ async function decode(){
  const stage=view.querySelector('.cart-stage');
  ticket.items.forEach((_,i)=>basket().add(i));
  metric=0;highlight=-1;
- if(reduced.matches){go('analysis');return;}
+ if(!usePageMotion()){go('analysis');return;}
 
  const frame=exhibit.getBoundingClientRect();
  const scale=frame.width/exhibit.offsetWidth;
@@ -1016,6 +1041,7 @@ view.addEventListener('focusout',event=>{
  if(event.target.closest('[data-act=mark]'))previewItem(-1);
 });
 go('intro',{focus:false});
+requestAnimationFrame(()=>requestAnimationFrame(loadRemainingPreviews));
 
 
 

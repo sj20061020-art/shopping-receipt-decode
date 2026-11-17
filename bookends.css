@@ -16,6 +16,7 @@
  background:var(--piece-paper,transparent);
 }
 .cover-piece[data-act]{width:calc(min(var(--piece-width),var(--piece-max-width)) * 1.15);padding:0}
+.cover-piece[data-act]:has(>img[data-preview]){visibility:hidden}
 .cover-piece[data-act]:is(:hover,:focus-visible){z-index:2}
 .cover-food{z-index:1}
 #exhibit .cover-piece[data-act]:focus-visible{outline:2px solid var(--tb-midnight-indigo);outline-offset:3px}
@@ -94,4 +95,91 @@
  width:295px;
  rotate:-7deg;
  background:linear-gradient(90deg,var(--tb-hot-magenta) 0 23%,var(--tb-lemon-yellow) 23% 96%,var(--tb-midnight-indigo) 96%);
+}
+
+@media(max-width:760px){
+ html,body{height:auto;overflow:visible}
+ body{background:var(--paper)}
+ #exhibit{
+  position:relative;inset:auto;display:block;width:100%;height:auto;
+  min-height:100vh;min-height:100svh;overflow:clip;transform:none;box-shadow:none;
+ }
+ #exhibit main{padding-inline:16px}
+ #exhibit .site-wordmark{top:18px;left:16px;font-size:21px}
+ .book-intro{height:100vh;height:100svh}
+ .cover-piece[data-act]{width:calc(var(--piece-width) * 1.9)}
+ .cover-food img{filter:none}
+
+ #exhibit main:has(>.wall-tools),#exhibit main:has(>.screen-tools){padding-top:62px;padding-bottom:24px}
+ #exhibit .wall-tools{height:auto;min-height:48px;margin-bottom:12px}
+ #exhibit .wall-sort-controls{flex-wrap:wrap;gap:8px 12px;padding-block:6px}
+ #exhibit .wall-sort-controls select{min-height:36px;font-size:16px}
+ #exhibit .wall-sort-note{order:1;width:100%}
+ #exhibit .tickets{
+  grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:none;gap:12px 8px;
+ }
+ #exhibit .tile{scroll-margin-top:12px}
+ #exhibit .tile-meta{font-size:11px;white-space:nowrap}
+ #exhibit .tile-preview{display:none}
+
+ #exhibit main:has(>.pick){padding-inline:16px}
+ #exhibit main:has(>.pick)>.screen-tools{padding-right:0}
+ #exhibit main:has(>.pick)>.screen-tools::after{inset-inline:0}
+ #exhibit .pick{display:flex;flex-direction:column;height:auto;padding:0;gap:12px}
+ #exhibit .pick>.receipt-panel{width:100%;max-width:480px;margin:0 auto}
+ #exhibit .pick .ticket-wrap{width:100%}
+ #exhibit .pick .ticket-wrap img{width:100%;height:auto}
+ #exhibit .pick .cart-panel{
+  order:-1;position:sticky;top:0;z-index:6;background:var(--paper);
+  padding:4px 0 8px;border-bottom:1px solid var(--line);
+ }
+ #exhibit .pick .cart-stage{
+  width:min(100%,520px);margin:0 auto;--basket-food-size:clamp(45px,13vw,80px);
+ }
+ #exhibit .pick .cart-stage.basket-many{--basket-food-size:clamp(40px,11vw,70px)}
+ #exhibit .pick .cart-caption{margin:-3px 0 5px;font-size:13px}
+ #exhibit .pick .actions{gap:6px}
+
+ #exhibit .analysis{padding:24px 0 0}
+ #exhibit .nutrient-controls{
+  top:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:0;
+ }
+ #exhibit .nutrient-button{
+  width:min(100%,84px);height:auto;aspect-ratio:1;gap:3px;
+  border-width:4px;font-size:clamp(12px,3.6vw,15px);
+ }
+ #exhibit .nutrient-button img{width:16px;height:16px}
+ #exhibit .nutrition-body{margin-top:26px}
+ #exhibit .analysis .readout strong{font-size:clamp(46px,15vw,78px)}
+ #exhibit .nutrition-body .markers{min-height:44px;gap:5px;padding:0}
+ #exhibit .nutrition-body .markers .food{width:100%;max-width:56px}
+ #exhibit .nutrition-body .bar{height:46px}
+ #exhibit .chart-caption{gap:10px;padding-right:0}
+ #exhibit .chart-caption .item-insight{font-size:13px}
+ #exhibit .nutrition-body .legend{position:relative;inset:auto;width:100%;max-height:unset}
+ #exhibit .analysis-next{margin:28px 0 0}
+ #exhibit .analysis>.receipt-panel{position:static;margin:12px 0 0}
+ #exhibit .analysis>.receipt-panel details{width:100%}
+ #exhibit .analysis .ticket-wrap img{height:auto;width:100%}
+
+ #personality-receipt{
+  inset:auto 12px 18px;width:auto;max-width:520px;margin-inline:auto;transform:none;
+ }
+ .personality-paper{
+  min-height:0;max-height:calc(100vh - 36px);max-height:calc(100dvh - 36px);padding:14px 18px;
+ }
+ .personality-hero:has(>.personality-portrait){padding-top:24px}
+ .personality-portrait{min-height:200px}
+ .personality-portrait img{width:200px;height:198px}
+ .personality-portrait::before{width:154px;height:154px}
+ .personality-stamp{min-width:62px;min-height:50px;right:0}
+ .personality-hero h2{font-size:clamp(25px,7vw,36px)}
+ #exhibit main:has(>.types){padding-top:58px}
+ #exhibit .screen-head:has(+.types){height:auto;flex-wrap:wrap;gap:14px;padding-top:0}
+ #exhibit .screen-head:has(+.types) h1{font-size:clamp(25px,8vw,40px)}
+ #exhibit .types{grid-template-columns:1fr;grid-template-rows:none;gap:10px}
+}
+
+@media(hover:none){
+ .cover-piece[data-act]:hover img{scale:1;filter:none}
 }
